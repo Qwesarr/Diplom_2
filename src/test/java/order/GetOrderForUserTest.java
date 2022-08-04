@@ -14,31 +14,20 @@ import static org.apache.http.HttpStatus.SC_OK;
 import static org.apache.http.HttpStatus.SC_UNAUTHORIZED;
 import static org.junit.Assert.*;
 
-public class GetOrderForUserTest {
-    private static UserClient userClient;
-    private static OrderClient orderClient;
-
-    String token;
+public class GetOrderForUserTest extends OrderClient {
+    private static final UserClient userClient = new UserClient();
+    private String token;
     //тестовые данные для регистрации/входа в систему
-    TestData testData = new TestData();
-    UserDto userDto = new UserDto(testData.getName(), testData.getEmail(), testData.getPassword());
-    IngDto ingDto = new IngDto();
-    //IngDto ingDto = new IngDto(testData.getIngredientsList());
+    private static final TestData testData = new TestData();
     //Сообщения с ошибкой
-    String userOrderErrorText = "You should be authorised";
+    private static final String userOrderErrorText = "You should be authorised";
 
     @Before
     public void setUp() {
-        new UserClient(new RestAssuredClient()).registration(userDto);                                                  //Регистрируем нового пользователя в начале теста
-        new OrderClient(new RestAssuredClient());
-        userClient = new UserClient(new RestAssuredClient());
-        orderClient = new OrderClient(new RestAssuredClient());
-
-        token = userClient.login(new UserDto(userDto.getEmail(), userDto.getPassword())).                               //Получаем токен пользователя
-                then().
-                statusCode(200).
-                extract().
-                path("accessToken");
+        //Получим сразу токен, что бы не нагружать систему запросами, а то она порой падает
+        token = userClient.registration(new UserDto(testData.getName(), testData.getEmail(), testData.getPassword())).path("accessToken");
+        //Добавим в заказ 1 ингредиент
+        create(new IngDto(testData.getIngredient(0)),token);
     }
 
     @After
@@ -49,16 +38,16 @@ public class GetOrderForUserTest {
     @Test
     @DisplayName("Получаем список заказов пользователя с авторизацией")
     public void getOrderWithAuthTest() {
-        Response responseOrder = orderClient.getOrderClient(token);                                                     //Запрос списка заказов пользователя
+        Response responseOrder = getOrderClient(token);                                                                 //Запрос списка заказов пользователя
         assertEquals(SC_OK, responseOrder.statusCode());                                                                //Проверка кода ответа
-        assertTrue(responseOrder.path("success"));                                                                      //Проверка тела ответа - успех запроса
-        assertTrue(responseOrder.path("").toString().contains("orders"));                                               //Проверка тела ответа -
+        assertTrue(responseOrder.path("success"));                                                                   //Проверка тела ответа - успех запроса
+        assertTrue(responseOrder.path("orders").toString().contains(testData.getIngredient(0)));               //Проверка тела ответа - есть ингредиент
     }
 
     @Test
     @DisplayName("Получаем список заказов пользователя без авторизации")
     public void getOrderWithoutAuthTest() {
-        Response responseOrder = orderClient.getOrderClient();
+        Response responseOrder = getOrderClient();
         assertEquals(SC_UNAUTHORIZED, responseOrder.statusCode());
         assertFalse(responseOrder.path("success"));
         assertEquals(userOrderErrorText,responseOrder.path("message"));

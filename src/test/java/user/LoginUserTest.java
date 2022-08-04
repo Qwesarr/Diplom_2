@@ -1,6 +1,7 @@
 package user;
 
 import client.*;
+import dto.LoginDto;
 import dto.UserDto;
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.Response;
@@ -13,36 +14,29 @@ import static org.apache.http.HttpStatus.*;
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 
-public class LoginUserTest {
-    private static UserClient userClient;
+public class LoginUserTest extends UserClient {
+    private String token;
     //тестовые данные для регистрации/входа в систему
-    TestData testData = new TestData();
-    UserDto userDto = new UserDto(testData.getName(), testData.getEmail(), testData.getPassword());
+    private static final TestData testData = new TestData();
+    private static final UserDto userDto = new UserDto(testData.getName(), testData.getEmail(), testData.getPassword());
+    private final LoginDto loginDto = new LoginDto(userDto.getEmail(),userDto.getPassword());
     //Сообщения с ошибкой
-    String userLoginErrorText = "email or password are incorrect";
+    private static final String userLoginErrorText = "email or password are incorrect";
 
     @Before
-    public void setUp() {
-        new UserClient(new RestAssuredClient()).registration(userDto);                                                  //Регистрируем нового пользователя в начале теста
-        userClient = new UserClient(new RestAssuredClient());
+    public void setUp() throws InterruptedException {
+        //Получим сразу токен, что бы не нагружать систему запросами, а то она порой падает
+        token = registration(userDto).path("accessToken");
     }
 
     @After
     public void clearData() {
-        try{
-            userClient.delete(userClient.login(new UserDto(userDto.getEmail(), userDto.getPassword())).                      //Удаляем пользователя в конце теста
-                    then().
-                    statusCode(200).
-                    extract().
-                    path("accessToken"));}
-        catch (AssertionError exception) {
-            System.out.println("Пользователь не создан, нечего удалять");                                               // код, который выполнится, если произойдёт исключение AssertionError
-        }
+        delete(token);
     }
     @Test
     @DisplayName("Логин под пользователем с верным логином и паролем")
     public void loginUserWithCorrectLoginPasswordTest() {
-        Response responseLogin = userClient.login(new UserDto(userDto.getEmail(), userDto.getPassword()));              //Берем логин и пароль из ранее созданного DTO для создания нового пользователя
+        Response responseLogin = login(loginDto);                                                                       //Берем логин и пароль
         assertEquals(SC_OK, responseLogin.statusCode());                                                               //Проверка кода ответа
         assertTrue(responseLogin.path("success"));                                                                     //Проверка тела ответа - успех запроса
         assertTrue(responseLogin.path("user").toString().contains(testData.getEmail()));                               //Проверка тела ответа - авторизован пользователь с указанным Email
@@ -51,7 +45,8 @@ public class LoginUserTest {
     @Test
     @DisplayName("Логин под пользователем с не верным логином (не успешно)")
     public void loginUserWithIncorrectLoginCorrectPasswordTest() {
-        Response responseLogin = userClient.login(new UserDto("TEST"+ userDto.getEmail(), userDto.getPassword()));      //Берем логин и пароль из ранее созданного DTO для создания нового пользователя. Меняем логин.
+        loginDto.setEmail("TEST" + loginDto.getEmail());                                                               //Меняем логин
+        Response responseLogin = login(loginDto);
         assertEquals(SC_UNAUTHORIZED, responseLogin.statusCode());                                                     //Проверка кода ответа
         assertFalse(responseLogin.path("success"));                                                                    //Проверка тела ответа - успех запроса
         assertEquals(userLoginErrorText,responseLogin.path("message"));                                                //Проверка тела ответа - сообщение с ошибкой
@@ -60,7 +55,8 @@ public class LoginUserTest {
     @Test
     @DisplayName("Логин под пользователем с не верным паролем (не успешно)")
     public void loginUserWithCorrectLoginIncorrectPasswordTest() {
-        Response responseLogin = userClient.login(new UserDto(userDto.getEmail(),"TEST"+ userDto.getPassword()));       //Берем логин и пароль из ранее созданного DTO для создания нового пользователя. Меняем пароль.
+        loginDto.setPassword("TEST" + loginDto.getPassword());                                                          //Меняем пароль
+        Response responseLogin = login(loginDto);
         assertEquals(SC_UNAUTHORIZED, responseLogin.statusCode());                                                     //Проверка кода ответа
         assertFalse(responseLogin.path("success"));                                                                    //Проверка тела ответа - успех запроса
         assertEquals(userLoginErrorText,responseLogin.path("message"));                                                //Проверка тела ответа - сообщение с ошибкой

@@ -1,34 +1,37 @@
 package client;
 
+import dto.LoginDto;
 import dto.UserDto;
 import io.restassured.response.Response;
 import org.jetbrains.annotations.NotNull;
 
-public class UserClient {
-    private final RestAssuredClient restAssuredClient;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-    public UserClient(RestAssuredClient restAssuredClient) {
-        this.restAssuredClient = restAssuredClient;
-    }
-
+public class UserClient extends RestAssuredClient {
+    private static final Logger log = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
     public Response change(UserDto userDto, @NotNull String token) {
-        return restAssuredClient.patch("auth/user", userDto, token.substring("Bearer ".length()));
+        return patch("auth/user", userDto, token.substring("Bearer ".length()));
     }
 
     public Response change(UserDto userDto) {
-        return restAssuredClient.patch("auth/user", userDto);
+        return patch("auth/user", userDto);
     }
 
-    public Response delete(@NotNull String token) {
-        return restAssuredClient.delete("auth/user", token.substring("Bearer ".length()));
+    public void delete(String token) {
+        try {
+            delete("auth/user", token.substring("Bearer ".length()));
+            } catch (NullPointerException e){
+            log.log(Level.WARNING,"Не удалось получить токен для пользователя. Нечего удалять. -  " + e);
+            }
     }
 
-    public Response login(UserDto userDto) {
-        return restAssuredClient.post("auth/login", userDto);
+    public Response login(LoginDto loginDto) {
+        return post("auth/login", loginDto);
     }
 
     public Response registration(UserDto createDto) {
-        return restAssuredClient.post("auth/register", createDto);
+        return post("auth/register", createDto);
     }
 
 }
