@@ -12,12 +12,12 @@ import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 
 public class CreateNewOrderWithoutAuthUserTest extends OrderClient {
-    private static final TestData testData = new TestData();
-    private final IngDto ingDto = new IngDto();
+    private static TestData testData = new TestData();
+    private IngDto ingDto = new IngDto();
 
     //Сообщения с ошибкой
-    private static final String userOrderIncorrectIngErrorText = "One or more ids provided are incorrect";
-    private static final String userOrderWithoutIngErrorText = "Ingredient ids must be provided";
+    private static final String USER_ORDER_INCORRECT_ING_ERROR_TEXT = "One or more ids provided are incorrect";
+    private static final String USER_ORDER_WITHOUT_ING_ERROR_TEXT = "Ingredient ids must be provided";
 
     @Test
     @DisplayName("Создание нового заказа, с корректными ингредиентами для не авторизированного пользователя ")
@@ -36,7 +36,7 @@ public class CreateNewOrderWithoutAuthUserTest extends OrderClient {
         Response responseCreateOrder = create(ingDto);                                                                  //Создаем заказ с без набора ингредиентов
         assertEquals(SC_BAD_REQUEST, responseCreateOrder.statusCode());                                                 //Проверяем код ответа
         assertFalse(responseCreateOrder.path("success"));                                                            //Проверка тела ответа - успех запроса
-        assertEquals(userOrderWithoutIngErrorText,responseCreateOrder.path("message"));                              //Проверяем сообщения об ошибке
+        assertEquals(USER_ORDER_WITHOUT_ING_ERROR_TEXT,responseCreateOrder.path("message"));                              //Проверяем сообщения об ошибке
     }
 
     @Test
@@ -46,7 +46,7 @@ public class CreateNewOrderWithoutAuthUserTest extends OrderClient {
         Response responseCreateOrder = create(ingDto);                                                                  //Создаем заказ с не верным хешем ингредиентом
         assertEquals(SC_BAD_REQUEST, responseCreateOrder.statusCode());                                                 //Проверяем код ответа
         assertFalse(responseCreateOrder.path("success"));                                                            //Проверка тела ответа - успех запроса
-        assertEquals(userOrderIncorrectIngErrorText,responseCreateOrder.path("message"));                            //Проверяем сообщения об ошибке
+        assertEquals(USER_ORDER_INCORRECT_ING_ERROR_TEXT,responseCreateOrder.path("message"));                            //Проверяем сообщения об ошибке
     }
 
     @Test

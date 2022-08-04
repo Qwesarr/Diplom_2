@@ -14,16 +14,15 @@ import static org.junit.Assert.assertEquals;
 
 public class RegistrationNewUserTest extends UserClient {
     //тестовые данные для регистрации/входа в систему
-    private static final TestData testData = new TestData();
-    private final UserDto userDto = new UserDto(testData.getName(), testData.getEmail(), testData.getPassword());
+    private static TestData testData = new TestData();
+    private UserDto userDto = new UserDto(testData.getName(), testData.getEmail(), testData.getPassword());
     //Сообщения с ошибкой
-    private static final String userExistsText = "User already exists";
-    private static final String userCreateErrorText = "Email, password and name are required fields";
+    private static final String USER_ALREADY_EXISTS_ERROR = "User already exists";
+    private static final String REQUIRED_FIELDS_ERROR = "Email, password and name are required fields";
 
 
     @After
-    public void clearData() throws InterruptedException {
-        Thread.sleep(100);
+    public void clearData() {
         //Получаем данные для LoginDto из актуальных для теста данных UserDto
         delete(login(new LoginDto(userDto.getEmail(), userDto.getPassword())).path("accessToken"));
      }
@@ -44,7 +43,7 @@ public class RegistrationNewUserTest extends UserClient {
         Response responseCreate = registration(userDto);                                                                //Пытаемся создать еще раз такого же пользователя
         assertEquals(SC_FORBIDDEN, responseCreate.statusCode());                                                        //Проверка кода ответа
         assertFalse(responseCreate.path("success"));                                                                 //Проверка тела ответа - успех запроса
-        assertEquals(userExistsText,responseCreate.path("message"));                                                 //Проверка тела ответа - сообщение с ошибкой
+        assertEquals(USER_ALREADY_EXISTS_ERROR,responseCreate.path("message"));                                                 //Проверка тела ответа - сообщение с ошибкой
     }
 
     @Test
@@ -54,7 +53,7 @@ public class RegistrationNewUserTest extends UserClient {
         Response responseCreate = registration(userDto);                                                                //Пытаемся создать еще раз такого же пользователя
         assertEquals(SC_FORBIDDEN, responseCreate.statusCode());                                                        //Проверка кода ответа
         assertFalse(responseCreate.path("success"));                                                                 //Проверка тела ответа - успех запроса
-        assertEquals(userCreateErrorText,responseCreate.path("message"));                                            //Проверка тела ответа - сообщение с ошибкой
+        assertEquals(REQUIRED_FIELDS_ERROR,responseCreate.path("message"));                                            //Проверка тела ответа - сообщение с ошибкой
     }
 
     @Test
@@ -64,7 +63,7 @@ public class RegistrationNewUserTest extends UserClient {
         Response responseCreate = registration(userDto);                                                                //Пытаемся создать еще раз такого же пользователя
         assertEquals(SC_FORBIDDEN, responseCreate.statusCode());                                                        //Проверка кода ответа
         assertFalse(responseCreate.path("success"));                                                                 //Проверка тела ответа - успех запроса
-        assertEquals(userCreateErrorText,responseCreate.path("message"));                                            //Проверка тела ответа - сообщение с ошибкой
+        assertEquals(REQUIRED_FIELDS_ERROR,responseCreate.path("message"));                                            //Проверка тела ответа - сообщение с ошибкой
     }
 
     @Test
@@ -74,7 +73,7 @@ public class RegistrationNewUserTest extends UserClient {
         Response responseCreate = registration(userDto);                                                                //Пытаемся создать еще раз такого же пользователя
         assertEquals(SC_FORBIDDEN, responseCreate.statusCode());                                                        //Проверка кода ответа
         assertFalse(responseCreate.path("success"));                                                                 //Проверка тела ответа - успех запроса
-        assertEquals(userCreateErrorText,responseCreate.path("message"));                                            //Проверка тела ответа - сообщение с ошибкой
+        assertEquals(REQUIRED_FIELDS_ERROR,responseCreate.path("message"));                                            //Проверка тела ответа - сообщение с ошибкой
     }
 
 }

@@ -15,12 +15,12 @@ import static org.apache.http.HttpStatus.SC_UNAUTHORIZED;
 import static org.junit.Assert.*;
 
 public class GetOrderForUserTest extends OrderClient {
-    private static final UserClient userClient = new UserClient();
+    private static UserClient userClient = new UserClient();
     private String token;
     //тестовые данные для регистрации/входа в систему
-    private static final TestData testData = new TestData();
+    private static TestData testData = new TestData();
     //Сообщения с ошибкой
-    private static final String userOrderErrorText = "You should be authorised";
+    private static String userOrderErrorText = "You should be authorised";
 
     @Before
     public void setUp() {

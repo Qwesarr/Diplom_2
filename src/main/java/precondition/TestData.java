@@ -1,37 +1,33 @@
 package precondition;
 
-import dto.UserDto;
-
 import java.util.ArrayList;
 
 public class TestData {
-    private static final String name = "Qwesar";
-    private static final String email = "qwesar@list.ru";
-    private static final String password = "123456";
-    private static final ArrayList<String> ingredients = new ArrayList<>();
+    private static final String NAME = "Qwesar";
+    private static final String EMAIL = "qwesar@list.ru";
+    private static final String PASSWORD = "123456";
+    private static final ArrayList<String> INGREDIENTS = new ArrayList<>();
 
     public TestData(){
-        ingredients.add("61c0c5a71d1f82001bdaaa6d");
-        ingredients.add("61c0c5a71d1f82001bdaaa6f");
-        ingredients.add("61c0c5a71d1f82001bdaaa72");
+        INGREDIENTS.add("61c0c5a71d1f82001bdaaa6d");
+        INGREDIENTS.add("61c0c5a71d1f82001bdaaa6f");
+        INGREDIENTS.add("61c0c5a71d1f82001bdaaa72");
     }
     public String getName(){
-        return name;
-    };
+        return NAME;
+    }
     public String getEmail(){
-        return email;
-    };
+        return EMAIL;
+    }
     public String getPassword(){
-        return password;
-    };
+        return PASSWORD;
+    }
 
     public ArrayList<String> getIngredientList(){
-        return ingredients;
-    };
-
+        return INGREDIENTS;
+    }
 
     public String getIngredient(int index){
-        return ingredients.get(index);
-    };
-
+        return INGREDIENTS.get(index);
+    }
 }

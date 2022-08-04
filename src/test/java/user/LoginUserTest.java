@@ -17,14 +17,14 @@ import static org.junit.Assert.assertEquals;
 public class LoginUserTest extends UserClient {
     private String token;
     //тестовые данные для регистрации/входа в систему
-    private static final TestData testData = new TestData();
-    private static final UserDto userDto = new UserDto(testData.getName(), testData.getEmail(), testData.getPassword());
-    private final LoginDto loginDto = new LoginDto(userDto.getEmail(),userDto.getPassword());
+    private static TestData testData = new TestData();
+    private static UserDto userDto = new UserDto(testData.getName(), testData.getEmail(), testData.getPassword());
+    private LoginDto loginDto = new LoginDto(userDto.getEmail(),userDto.getPassword());
     //Сообщения с ошибкой
-    private static final String userLoginErrorText = "email or password are incorrect";
+    private static final String USER_LOGIN_ERROR_TEXT = "email or password are incorrect";
 
     @Before
-    public void setUp() throws InterruptedException {
+    public void setUp() {
         //Получим сразу токен, что бы не нагружать систему запросами, а то она порой падает
         token = registration(userDto).path("accessToken");
     }
@@ -49,7 +49,7 @@ public class LoginUserTest extends UserClient {
         Response responseLogin = login(loginDto);
         assertEquals(SC_UNAUTHORIZED, responseLogin.statusCode());                                                     //Проверка кода ответа
         assertFalse(responseLogin.path("success"));                                                                    //Проверка тела ответа - успех запроса
-        assertEquals(userLoginErrorText,responseLogin.path("message"));                                                //Проверка тела ответа - сообщение с ошибкой
+        assertEquals(USER_LOGIN_ERROR_TEXT,responseLogin.path("message"));                                                //Проверка тела ответа - сообщение с ошибкой
     }
 
     @Test
@@ -59,6 +59,6 @@ public class LoginUserTest extends UserClient {
         Response responseLogin = login(loginDto);
         assertEquals(SC_UNAUTHORIZED, responseLogin.statusCode());                                                     //Проверка кода ответа
         assertFalse(responseLogin.path("success"));                                                                    //Проверка тела ответа - успех запроса
-        assertEquals(userLoginErrorText,responseLogin.path("message"));                                                //Проверка тела ответа - сообщение с ошибкой
+        assertEquals(USER_LOGIN_ERROR_TEXT,responseLogin.path("message"));                                                //Проверка тела ответа - сообщение с ошибкой
     }
 }

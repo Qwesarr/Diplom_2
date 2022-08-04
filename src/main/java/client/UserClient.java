@@ -6,10 +6,10 @@ import io.restassured.response.Response;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.logging.Level;
-import java.util.logging.Logger;
+import lombok.extern.java.Log;
 
+@Log
 public class UserClient extends RestAssuredClient {
-    private static final Logger log = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
     public Response change(UserDto userDto, @NotNull String token) {
         return patch("auth/user", userDto, token.substring("Bearer ".length()));
     }

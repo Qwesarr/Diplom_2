@@ -17,9 +17,9 @@ import static org.junit.Assert.assertEquals;
 public class ChangeUserDataWithAuthTest extends UserClient {
     private String token;
     //тестовые данные для регистрации/входа в систему
-    private static final TestData testData = new TestData();
-    private static final UserDto userDto = new UserDto(testData.getName(), testData.getEmail(), testData.getPassword());
-    private final LoginDto loginDto = new LoginDto(userDto.getEmail(),userDto.getPassword());
+    private static TestData testData = new TestData();
+    private UserDto userDto = new UserDto(testData.getName(), testData.getEmail(), testData.getPassword());
+    private LoginDto loginDto = new LoginDto(userDto.getEmail(),userDto.getPassword());
 
     @Before
     public void setUp() {

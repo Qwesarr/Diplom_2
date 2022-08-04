@@ -15,10 +15,10 @@ import static org.junit.Assert.*;
 public class ChangeUserDataWithoutAuthTest extends UserClient {
     private String token;
     //тестовые данные для регистрации/входа в систему
-    private static final TestData testData = new TestData();
-    private static final UserDto userDto = new UserDto(testData.getName(), testData.getEmail(), testData.getPassword());
+    private static TestData testData = new TestData();
+    private UserDto userDto = new UserDto(testData.getName(), testData.getEmail(), testData.getPassword());
     //Сообщения с ошибкой
-    private static final String userChangeErrorText = "You should be authorised";
+    private static final String USER_CHANGE_ERROR_TEXT = "You should be authorised";
 
     @Before
     public void setUp() {
@@ -38,7 +38,7 @@ public class ChangeUserDataWithoutAuthTest extends UserClient {
         Response responseChange = change(userDto);                                                                      //Меняем данные пользователя (меняется имя)
         assertEquals(SC_UNAUTHORIZED, responseChange.statusCode());                                                     //Проверка кода ответа
         assertFalse(responseChange.path("success"));                                                                    //Проверка тела ответа - успех запроса
-        assertEquals(userChangeErrorText,responseChange.path("message"));                                               //Проверка сообщения об ошибке
+        assertEquals(USER_CHANGE_ERROR_TEXT,responseChange.path("message"));                                               //Проверка сообщения об ошибке
     }
 
     @Test
@@ -48,7 +48,7 @@ public class ChangeUserDataWithoutAuthTest extends UserClient {
         Response responseChange = change(userDto);                                                                     //Меняем данные пользователя (меняется имя)
         assertEquals(SC_UNAUTHORIZED, responseChange.statusCode());                                                     //Проверка кода ответа
         assertFalse(responseChange.path("success"));                                                                    //Проверка тела ответа - успех запроса
-        assertEquals(userChangeErrorText,responseChange.path("message"));                                               //Проверка сообщения об ошибке
+        assertEquals(USER_CHANGE_ERROR_TEXT,responseChange.path("message"));                                               //Проверка сообщения об ошибке
     }
 
     @Test
@@ -58,6 +58,6 @@ public class ChangeUserDataWithoutAuthTest extends UserClient {
         Response responseChange = change(userDto);                                                                       //Меняем данные пользователя (меняется имя)
         assertEquals(SC_UNAUTHORIZED, responseChange.statusCode());                                                     //Проверка кода ответа
         assertFalse(responseChange.path("success"));                                                                    //Проверка тела ответа - успех запроса
-        assertEquals(userChangeErrorText,responseChange.path("message"));                                               //Проверка сообщения об ошибке
+        assertEquals(USER_CHANGE_ERROR_TEXT,responseChange.path("message"));                                               //Проверка сообщения об ошибке
     }
 }
